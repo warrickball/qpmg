@@ -1,0 +1,122 @@
+#!/usr/bin/env python
+from argparse import ArgumentParser, ArgumentError
+
+def load_data(filename):
+    """Reads a MESA/GYRE style data file and returns the scalar and vector
+    data in two structured arrays.
+
+    Parameters
+    ----------
+    filename: str
+        Filename to load.
+
+    Returns
+    -------
+    header: structured array
+        Scalar data.  i.e. numbers for which there is only one value
+        in the data. e.g. initial parameters for a MESA history, the
+        total mass in a MESA profile or GYRE summary, the mode
+        frequency of a GYRE mode file, etc.
+
+    data: structured array
+        Vector data.  i.e. numbers for which there are multiple
+        entries.  e.g.  luminosity over an evolutionary run in a MESA
+        history, the density as a function of radius in a MESA
+        profile, mode frequencies in a GYRE summary, etc.
+
+    """
+    
+    with open(filename, 'r') as f:
+        lines = [line.encode('utf-8') for line in f.readlines()]
+
+    header = np.genfromtxt(lines[1:3], names=True)
+    data = np.genfromtxt(lines[5:], names=True)
+
+    return header, data
+
+parser = ArgumentParser( description="""`qpmg` is a simple Python
+script to quickly inspect output that adheres to the format used by
+MESA's profiles and histories and GYRE's summaries and mode files.
+While `qpmg` provides many options, it's intended for quick
+inspection rather than publication-quality plots.
+
+To see the list of available columns in a file, run `qpmg` on a given
+file.  The defaults will cause an error that displays the available
+columns.""")
+parser.add_argument('filenames', type=str, nargs='+')
+parser.add_argument('-x', type=str, nargs='+', default=[''])
+parser.add_argument('-y', type=str, nargs='+', default=[''],
+                    help="Column(s) to use for the x and y variables.  "
+                    "The code loops through "
+                    "however many x and y keys you give (inner loop "
+                    "over x, outer loop over y) but most of the time "
+                    "you probably only want one x variable.")
+parser.add_argument('--xlabel', type=str, nargs='+', default=None)
+parser.add_argument('--ylabel', type=str, nargs='+', default=None,
+                    help="Overrides the axis label with the given string.  Accepts "
+                    "spaces. i.e. 'effective temperature' is OK.  Default is to use the "
+                    "first argument of -x/-y.")
+parser.add_argument('--legend', type=str, nargs='+', default=None,
+                    help="If 'auto', add a legend using the filenames as keys.  Otherwise, use "
+                    "the arguments as a list of keys.  Default is no legend.")
+parser.add_argument('--style', type=str, default='-')
+# parser.add_argument('--exp10-x', action='store_const', const=True, default=False,
+#                     help="raise x-axis to power of 10")
+# parser.add_argument('--exp10-y', action='store_const', const=True, default=False,
+#                     help="raise y-axis to power of 10")
+# parser.add_argument('--log10-x', action='store_const', const=True, default=False,
+#                     help="take log10 of x-axis")
+# parser.add_argument('--log10-y', action='store_const', const=True, default=False,
+#                     help="take log10 of y-axis")
+parser.add_argument('--title', type=str, nargs='+', default=[''],
+                    help="Adds the given title to the plot.  Accepts spaces. i.e. 'my plot' "
+                    "is OK.  Default is no title.")
+parser.add_argument('--style-file', type=str, default=None,
+                    help="Specifies a matplotlib style file to load.")
+args = parser.parse_args()
+
+import numpy as np
+from matplotlib import pyplot as pl
+
+if args.style_file:
+    pl.style.use(args.style_file)
+
+for filename in args.filenames:
+    header, data = load_data(filename)
+    
+    for kx in args.x:
+        if kx not in data.dtype.names:
+            raise KeyError("'%s' is not a column in file '%s'. " % (kx, filename) +
+                           "Available columns are: " + 
+                           ", ".join(data.dtype.names))
+        
+        x = data[kx]
+
+        for ky in args.y:
+            if ky not in data.dtype.names:
+                raise KeyError("'%s' is not a column in file '%s'. " % (ky, filename) +
+                               "Available columns are: " + 
+                               ", ".join(data.dtype.names))
+        
+            y = data[ky]
+            
+            pl.plot(x, y, args.style)
+
+if args.xlabel:
+    pl.xlabel(' '.join(args.xlabel))
+else:
+    pl.xlabel(args.x[0])
+        
+if args.ylabel:
+    pl.ylabel(' '.join(args.ylabel))
+else:
+    pl.ylabel(args.y[0])
+
+if args.legend:
+    if args.legend[0] == 'auto':
+        pl.legend()
+    else:
+        pl.legend(args.legend)
+
+pl.title(' '.join(args.title))
+pl.show()

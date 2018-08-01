@@ -10,16 +10,14 @@ qpmg
               [--style-file STYLE_FILE]
               filenames [filenames ...]
 
-`qpmg` is a simple Python script to quickly inspect output that adheres to the
+``qpmg`` is a simple Python script to quickly inspect output that adheres to the
 format used by MESA's profiles and histories and GYRE's summaries and mode
-files. While `qpmg` provides many options, it's intended for quick inspection
+files. While ``qpmg`` provides many options, it's intended for quick inspection
 rather than publication-quality plots. To see the list of available columns in
-a file, run `qpmg` on a given file. The defaults will cause an error that
+a file, run ``qpmg`` on a given file. The defaults will cause an error that
 displays the available columns.
 
-positional arguments:
-
-  `filenames`
+positional arguments: ``filenames``
 
 optional arguments:
 

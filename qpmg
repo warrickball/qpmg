@@ -34,13 +34,13 @@ def load_data(filename):
 
     return header, data
 
-parser = ArgumentParser( description="""`qpmg` is a simple Python
+parser = ArgumentParser( description="""``qpmg`` is a simple Python
 script to quickly inspect output that adheres to the format used by
 MESA's profiles and histories and GYRE's summaries and mode files.
-While `qpmg` provides many options, it's intended for quick
+While ``qpmg`` provides many options, it's intended for quick
 inspection rather than publication-quality plots.
 
-To see the list of available columns in a file, run `qpmg` on a given
+To see the list of available columns in a file, run ``qpmg`` on a given
 file.  The defaults will cause an error that displays the available
 columns.""")
 parser.add_argument('filenames', type=str, nargs='+')

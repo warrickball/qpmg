@@ -73,16 +73,65 @@ parser.add_argument('--title', type=str, nargs='+', default=[''],
                     "is OK.  Default is no title.")
 parser.add_argument('--style-file', type=str, default=None,
                     help="Specifies a matplotlib style file to load.")
+parser.add_argument('--rcParams', type=str, nargs='+', default=[],
+                    help="Any parameters in `matplotlib.pyplot.rcParams`, "
+                    "provided in the form `key` `value`. "
+                    "e.g. --rcParams text.usetex True fig.dpi 300")
+parser.add_argument('-v', '--verbose', action='store_true',
+                    help="Print diagnostic information as plot is made.")
 args = parser.parse_args()
 
+def vprint(*print_args, **print_kwargs):
+    if args.verbose:
+        print(*print_args, **print_kwargs)
+
+vprint('Importing libraries... ', end='', flush=True)
 import numpy as np
 from matplotlib import pyplot as pl
+vprint('Done.')
 
 if args.style_file:
+    vprint('Applying style file %s... ' % args.style_file,
+           end='', flush=True)
     pl.style.use(args.style_file)
+    vprint('Done.')
+else:
+    vprint('No style file requested.')
+
+vprint('Parsing `--rcParams`...')
+i = 0
+k = False
+all_keys = list(pl.rcParams.keys())
+while i < len(args.rcParams):
+    if not k:
+        k = args.rcParams[i]
+        i += 1
+        continue
+
+    s = args.rcParams[i]
+    if s in all_keys:
+        raise ValueError("I didn't get an argument for "
+                         "`rcParam` %s. " % k)
+
+    if type(pl.rcParams[k]) is bool:
+        if s.lower() in ['true', 't']:
+            s = True
+        elif s.lower() in ['false', 'f']:
+            s = False
+        else:
+            raise ValueError("rcParam %s expects a boolean. "
+                             "Please use `T`, `True`, `F` "
+                             "or `False` (case insensitive)")
+
+    pl.rcParams[k] = type(pl.rcParams[k])(s)
+    
+    k = False
+    i += 1
 
 for filename in args.filenames:
+    vprint('Loading file %s... ' % filename, end='', flush=True)
     header, data = load_data(filename)
+    vprint('Done.')
     
     for kx in args.x:
         if kx not in data.dtype.names:
@@ -119,4 +168,7 @@ if args.legend:
         pl.legend(args.legend)
 
 pl.title(' '.join(args.title))
+
+vprint('Plot ready.')
 pl.show()
+vprint('Script finished.  Exiting normally.')

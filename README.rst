@@ -12,7 +12,7 @@ qpmg
 
 ``qpmg`` is a simple Python script to quickly inspect output that adheres to the
 format used by MESA's profiles and histories and GYRE's summaries and mode
-files. While ``qpmg`` provides many options, it's intended for quick inspection
+files. While ``qpmg`` provides some options, it's intended for quick inspection
 rather than publication-quality plots. To see the list of available columns in
 a file, run ``qpmg`` on a given file. The defaults will cause an error that
 displays the available columns.
@@ -36,3 +36,31 @@ optional arguments:
 --title TITLE           Adds the given title to the plot. Accepts spaces. i.e.
                         'my plot' is OK. Default is no title.
 --style-file STYLE_FILE         Specifies a matplotlib style file to load.
+
+Installation
+------------
+
+``qpmg`` is available through ``pip``:
+
+::
+   
+  pip install qpmg
+
+You can also clone this GitHub repo:
+
+::
+   
+  git clone https://github.com/warrickball/qpmg.git
+  cd qpmg
+  pip install -e .
+
+or similar.
+
+Finally, the program is entirely constrained in the script ``qpmg``,
+so you can download this one file and use it as you please.  For
+example, I keep ``$HOME/.local/bin`` in my ``$PATH`` variable, so I
+might get the latest version of the script with
+
+::
+
+  wget https://raw.githubusercontent.com/warrickball/qpmg/master/qpmg -O $HOME/.local/bin

@@ -32,12 +32,12 @@ optional arguments:
 --legend LABELS         If ``auto``, add a legend using the filenames as keys.
                         Otherwise, use the arguments as a list of keys.
                         Default is no legend.
---style STYLE           point style, passed to plot function (default=``-``)
+--style STYLE           point style, passed to plot function (default=-)
 --scale-x SCALE_X       multiply variables on x-axis by this much (default=1)
 --scale-y SCALE_Y       multiply variables on y-axis by this much (default=1)
---plotter {plot,semilogx,semilogy,loglog}
-                        use ``matplotlib.pyplot.plotter`` to plot
-                        (default=``plot``)
+--plotter PLOTTER       use ``matplotlib.pyplot.PLOTTER`` to plot
+                        (one of ``plot``, ``semilogx``, ``semilogy`` or ``loglog``,
+			default=plot)
 --title TITLE           Adds the given title to the plot. Accepts spaces. i.e.
                         ``my plot`` is OK. Default is no title.
 --style-file STYLE_FILE         Specifies a matplotlib style file to load.

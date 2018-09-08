@@ -36,6 +36,42 @@ def load_data(filename):
 
     return header, data
 
+def get_column(data, key):
+    """Gets data in column `key` from the NumPy record array `data`.  If
+    the desired key isn't available, the function will see if the
+    logarithm (base 10) version is available in `log_` and use that.
+    Similarly, if the requested variable starts with `log_`, the
+    function will see if the non-logarithmic version is available, and
+    return that.
+
+    Parameters
+    ----------
+    data: numpy.recarray
+        Record array containing data from file, as returned by
+        `load_data`.
+    key: str
+        Name of column for which to retrieve data.
+
+    Returns
+    -------
+    column: numpy.recarray
+        Array containing data for the desired column.
+
+    """
+    if key in data.dtype.names:
+        return data[key]
+    else:
+        if ('log_' + key) in data.dtype.names:
+            return 10.**data['log_' + key]
+        else:
+            if key.startswith('log_') and key[4:] in data.dtype.names:
+                return np.log10(data[key[4:]])
+            else:
+                            raise KeyError("'%s' is not a column in file '%s'. " % (kx, filename) +
+                           "Available columns are: " + 
+                           ", ".join(data.dtype.names))
+        
+
 parser = ArgumentParser( description="""``qpmg`` is a simple Python
 script to quickly inspect output that adheres to the format used by
 MESA's profiles and histories and GYRE's summaries and mode files.
@@ -55,13 +91,15 @@ parser.add_argument('-y', type=str, nargs='+', default=[''],
                     "you probably only want one x variable.")
 parser.add_argument('--xlabel', type=str, nargs='+', default=None)
 parser.add_argument('--ylabel', type=str, nargs='+', default=None,
-                    help="Overrides the axis label with the given string.  Accepts "
-                    "spaces. i.e. 'effective temperature' is OK.  Default is to use the "
-                    "first argument of -x/-y.")
+                    help="Overrides the axis label with the given string.  "
+                    "Accepts spaces. i.e. 'effective temperature' is OK.  "
+                    "Default is to use the first argument of -x/-y.")
 parser.add_argument('--legend', type=str, nargs='+', default=None,
-                    help="If 'auto', add a legend using the filenames as keys.  Otherwise, use "
-                    "the arguments as a list of keys.  Default is no legend.")
-parser.add_argument('--style', type=str, default='-')
+                    help="If 'auto', add a legend using the filenames as "
+                    "keys.  Otherwise, use the arguments as a list of keys "
+                    "(default is no legend).")
+parser.add_argument('--style', type=str, default='-',
+                    help="point style, passed to plot function (default='-')")
 # parser.add_argument('--exp10-x', action='store_const', const=True, default=False,
 #                     help="raise x-axis to power of 10")
 # parser.add_argument('--exp10-y', action='store_const', const=True, default=False,
@@ -70,9 +108,16 @@ parser.add_argument('--style', type=str, default='-')
 #                     help="take log10 of x-axis")
 # parser.add_argument('--log10-y', action='store_const', const=True, default=False,
 #                     help="take log10 of y-axis")
+parser.add_argument('--scale-x', type=float, default=1.0,
+                    help="multiply variables on x-axis by this much (default=1)")
+parser.add_argument('--scale-y', type=float, default=1.0,
+                    help="multiply variables on y-axis by this much (default=1)")
+parser.add_argument('--plotter', type=str, default='plot',
+                    choices=['plot', 'semilogx', 'semilogy', 'loglog'],
+                    help="use 'matplotlib.pyplot.plotter' to plot (default='plot')")
 parser.add_argument('--title', type=str, nargs='+', default=[''],
-                    help="Adds the given title to the plot.  Accepts spaces. i.e. 'my plot' "
-                    "is OK.  Default is no title.")
+                    help="Adds the given title to the plot.  Accepts spaces. "
+                    "i.e. 'my plot' is OK.  Default is no title.")
 parser.add_argument('--style-file', type=str, default=None,
                     help="Specifies a matplotlib style file to load.")
 parser.add_argument('--rcParams', type=str, nargs='+', default=[],
@@ -99,6 +144,20 @@ if args.style_file:
     vprint('Done.')
 else:
     vprint('No style file requested.')
+
+vprint("Selecting plotter '%s'..." % args.plotter)
+if args.plotter == 'plot':
+    plotter = pl.plot
+elif args.plotter == 'semilogx':
+    plotter = pl.semilogx
+elif args.plotter == 'semilogy':
+    plotter = pl.semilogy
+elif args.plotter == 'loglog':
+    plotter = pl.loglog
+else:
+    raise ValueError("invalid choice for --plotter "
+                     "(but this should've been caught by argparse)")
+    
 
 vprint('Parsing `--rcParams`...')
 i = 0
@@ -136,22 +195,13 @@ for filename in args.filenames:
     vprint('Done.')
     
     for kx in args.x:
-        if kx not in data.dtype.names:
-            raise KeyError("'%s' is not a column in file '%s'. " % (kx, filename) +
-                           "Available columns are: " + 
-                           ", ".join(data.dtype.names))
-        
-        x = data[kx]
+        x = get_column(data, kx)
 
         for ky in args.y:
-            if ky not in data.dtype.names:
-                raise KeyError("'%s' is not a column in file '%s'. " % (ky, filename) +
-                               "Available columns are: " + 
-                               ", ".join(data.dtype.names))
-        
-            y = data[ky]
+            y = get_column(data, ky)
             
-            pl.plot(x, y, args.style, label=filename)
+            plotter(x*args.scale_x, y*args.scale_y,
+                    args.style, label=filename)
 
 if args.xlabel:
     pl.xlabel(' '.join(args.xlabel))

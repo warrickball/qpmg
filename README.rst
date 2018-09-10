@@ -35,6 +35,8 @@ optional arguments:
 --style STYLE           point style, passed to plot function (default=-)
 --scale-x SCALE_X       multiply variables on x-axis by this much (default=1)
 --scale-y SCALE_Y       multiply variables on y-axis by this much (default=1)
+--flip-x                reverse the x-axis
+--flip-y                reverse the y-axis
 --plotter PLOTTER       use ``matplotlib.pyplot.PLOTTER`` to plot
                         (one of ``plot``, ``semilogx``, ``semilogy`` or ``loglog``,
 			default=plot)

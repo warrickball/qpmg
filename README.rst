@@ -4,11 +4,13 @@ qpmg
 
 ::
 
-  usage: qpmg [-h] [-x X [X ...]] [-y Y [Y ...]] [--xlabel XLABEL [XLABEL ...]]
-              [--ylabel YLABEL [YLABEL ...]] [--legend LEGEND [LEGEND ...]]
-              [--style STYLE] [--title TITLE [TITLE ...]]
-              [--style-file STYLE_FILE]
-              filenames [filenames ...]
+  usage: qpmg [-h] filenames [filenames ...]
+              [-x X [X ...]] [-y Y [Y ...]] [--xlabel XLABEL [XLABEL ...]]
+              [--ylabel YLABEL [YLABEL ...]] [--legend LEGEND [LEGEND ...]] [--style STYLE]
+              [--scale-x SCALE_X] [--scale-y SCALE_Y] [--flip-x] [--flip-y]
+              [--plotter {plot,semilogx,semilogy,loglog}] [--title TITLE [TITLE ...]]
+              [--style-file STYLE_FILE] [--rcParams RCPARAMS [RCPARAMS ...]] [-v]
+
 
 ``qpmg`` is a simple Python script to quickly inspect output that adheres to the
 format used by MESA's profiles and histories and GYRE's summaries and mode

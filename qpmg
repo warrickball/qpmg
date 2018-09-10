@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
 from argparse import ArgumentParser
 
 def load_data(filename):
@@ -124,12 +123,19 @@ parser.add_argument('--title', type=str, nargs='+', default=[''],
                     "i.e. 'my plot' is OK.  Default is no title.")
 parser.add_argument('--style-file', type=str, default=None,
                     help="Specifies a matplotlib style file to load.")
-parser.add_argument('--rcParams', type=str, nargs='+', default=[],
-                    help="Any parameters in `matplotlib.pyplot.rcParams`, "
-                    "provided in the form `key` `value`. "
-                    "e.g. --rcParams text.usetex True fig.dpi 300")
-parser.add_argument('-v', '--verbose', action='store_true',
-                    help="Print diagnostic information as plot is made.")
+# parser.add_argument('--rcParams', type=str, nargs='+', default=[],
+#                     help="Any parameters in `matplotlib.pyplot.rcParams`, "
+#                     "provided in the form `key` `value`. "
+#                     "e.g. --rcParams text.usetex True figure.dpi 300")
+# parser.add_argument('-v', '--verbose', action='store_true',
+#                     help="Print diagnostic information as plot is made.")
+
+# skulduggery to put positional arguments first in usage
+usage = parser.format_usage().split('\n')[:-1]
+usage.insert(1, ' '*(len(parser.prog) + 8) + usage[0][usage[0].index('[-x'):])
+usage[0] = parser.prog + ' [-h] ' + usage[-1].strip()
+parser.usage = '\n'.join(usage[:-1])
+
 args = parser.parse_args()
 
 def vprint(*print_args):

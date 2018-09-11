@@ -73,3 +73,20 @@ might get the latest version of the script with
 ::
 
   wget https://raw.githubusercontent.com/warrickball/qpmg/master/qpmg -O $HOME/.local/bin
+
+Examples
+--------
+
+Here are a few examples from the output of MESA's test suite (r10398).
+
+::
+   
+   qpmg example_make_pre_ccsn/LOGS/profile31.data -x q -y h1 he4 c12 n14 o16 ne20 mg24 si28 s32 ar36 ca40 ti44 cr48 fe52 fe54 fe56 ni56 --plotter semilogy --legend h1 he4 c12 n14 o16 ne20 mg24 si28 s32 ar36 ca40 ti44 cr48 fe52 fe54 fe56 ni56 --title example_make_pre_ccsn
+
+.. image:: eg/example_make_pre_ccsn.png
+   
+::
+   
+   qpmg he_core_flash/LOGS/history.data -x model_number -y conv_mx1_top conv_mx1_bot conv_mx2_top conv_mx2_bot --style . --title he_core_flash
+
+.. image:: eg/he_core_flash.png

@@ -66,9 +66,9 @@ def get_column(data, key):
             if key.startswith('log_') and key[4:] in data.dtype.names:
                 return np.log10(data[key[4:]])
             else:
-                            raise KeyError("'%s' is not a column in file '%s'. " % (kx, filename) +
-                           "Available columns are: " + 
-                           ", ".join(data.dtype.names))
+                raise KeyError("'%s' is not a column in file '%s'. " % (key, filename) +
+                               "Available columns are: " + 
+                               ", ".join(data.dtype.names))
         
 
 parser = ArgumentParser( description="""``qpmg`` is a simple Python
@@ -123,10 +123,10 @@ parser.add_argument('--title', type=str, nargs='+', default=[''],
                     "i.e. 'my plot' is OK.  Default is no title.")
 parser.add_argument('--style-file', type=str, default=None,
                     help="Specifies a matplotlib style file to load.")
-# parser.add_argument('--rcParams', type=str, nargs='+', default=[],
-#                     help="Any parameters in `matplotlib.pyplot.rcParams`, "
-#                     "provided in the form `key` `value`. "
-#                     "e.g. --rcParams text.usetex True figure.dpi 300")
+parser.add_argument('--rcParams', type=str, nargs='+', default=[],
+                    help="Any parameters in `matplotlib.pyplot.rcParams`, "
+                    "provided in the form `key` `value`. "
+                    "e.g. --rcParams text.usetex True figure.dpi 300")
 # parser.add_argument('-v', '--verbose', action='store_true',
 #                     help="Print diagnostic information as plot is made.")
 
@@ -139,7 +139,8 @@ parser.usage = '\n'.join(usage[:-1])
 args = parser.parse_args()
 
 def vprint(*print_args):
-    if args.verbose:
+    # if args.verbose:
+    if False:
         print(*print_args)
 
 vprint('Importing libraries... ')

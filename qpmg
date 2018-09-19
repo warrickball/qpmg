@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import gzip
 from argparse import ArgumentParser
 
 def load_data(filename):
@@ -26,9 +27,13 @@ def load_data(filename):
         profile, mode frequencies in a GYRE summary, etc.
 
     """
-    
-    with open(filename, 'r') as f:
-        lines = [line.encode('utf-8') for line in f.readlines()]
+
+    if filename.lower().endswith('.gz'):
+        with gzip.open(filename, 'rb') as f:
+            lines = [line.decode('utf-8') for line in f.readlines()]
+    else:
+        with open(filename, 'r') as f:
+            lines = [line.encode('utf-8') for line in f.readlines()]
 
     header = np.genfromtxt(lines[1:3], names=True)
     data = np.genfromtxt(lines[5:], names=True)

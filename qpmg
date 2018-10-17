@@ -43,10 +43,10 @@ def load_data(filename):
 def get_column(data, key):
     """Gets data in column `key` from the NumPy record array `data`.  If
     the desired key isn't available, the function will see if the
-    logarithm (base 10) version is available in `log_` and use that.
-    Similarly, if the requested variable starts with `log_`, the
-    function will see if the non-logarithmic version is available, and
-    return that.
+    logarithm (base 10) version is available in `log_key` or `logkey`
+    and use that.  Similarly, if the requested variable starts with
+    `log_` or `log`, the function will see if the non-logarithmic
+    version is available, and return that.
 
     Parameters
     ----------
@@ -64,16 +64,18 @@ def get_column(data, key):
     """
     if key in data.dtype.names:
         return data[key]
+    elif ('log_' + key) in data.dtype.names:
+        return 10.**data['log_' + key]
+    elif ('log' + key) in data.dtype.names:
+        return 10.**data['log' + key]
+    elif key.startswith('log_') and key[4:] in data.dtype.names:
+        return np.log10(data[key[4:]])
+    elif key.startswith('log') and key[3:] in data.dtype.names:
+        return np.log10(data[key[3:]])
     else:
-        if ('log_' + key) in data.dtype.names:
-            return 10.**data['log_' + key]
-        else:
-            if key.startswith('log_') and key[4:] in data.dtype.names:
-                return np.log10(data[key[4:]])
-            else:
-                raise KeyError("'%s' is not a column in file '%s'. " % (key, filename) +
-                               "Available columns are: " + 
-                               ", ".join(data.dtype.names))
+        raise KeyError("'%s' is not a column in file '%s'. " % (key, filename) +
+                       "Available columns are: " + 
+                       ", ".join(data.dtype.names))
         
 
 parser = ArgumentParser( description="""``qpmg`` is a simple Python

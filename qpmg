@@ -104,7 +104,7 @@ parser.add_argument('--legend', type=str, nargs='+', default=None,
                     help="If 'auto', add a legend using the filenames as "
                     "keys.  Otherwise, use the arguments as a list of keys "
                     "(default is no legend).")
-parser.add_argument('--style', type=str, default='-',
+parser.add_argument('-s', '--style', type=str, default='-',
                     help="point style, passed to plot function (default='-')")
 # parser.add_argument('--exp10-x', action='store_const', const=True, default=False,
 #                     help="raise x-axis to power of 10")

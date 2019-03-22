@@ -6,10 +6,11 @@ qpmg
 
   usage: qpmg [-h] filenames [filenames ...]
               [-x X [X ...]] [-y Y [Y ...]] [--xlabel XLABEL [XLABEL ...]]
-              [--ylabel YLABEL [YLABEL ...]] [--legend LEGEND [LEGEND ...]] [--style STYLE]
-              [--scale-x SCALE_X] [--scale-y SCALE_Y] [--flip-x] [--flip-y]
-              [--plotter {plot,semilogx,semilogy,loglog}] [--title TITLE [TITLE ...]]
-              [--style-file STYLE_FILE] [--rcParams RCPARAMS [RCPARAMS ...]] [-v]
+              [--ylabel YLABEL [YLABEL ...]] [--legend LEGEND [LEGEND ...]]
+              [-s STYLE] [--scale-x SCALE_X] [--scale-y SCALE_Y] [--flip-x]
+              [--flip-y] [--plotter {plot,semilogx,semilogy,loglog}]
+              [--title TITLE [TITLE ...]] [--style-file STYLE_FILE]
+              [--rcParams RCPARAMS [RCPARAMS ...]]
 
 
 ``qpmg`` is a simple Python script to quickly inspect output that adheres to the
@@ -34,7 +35,7 @@ optional arguments:
 --legend LABELS         If ``auto``, add a legend using the filenames as keys.
                         Otherwise, use the arguments as a list of keys.
                         Default is no legend.
---style STYLE           point style, passed to plot function (default=-)
+-s STYLE, --style STYLE    point style, passed to plot function (default=-)
 --scale-x SCALE_X       multiply variables on x-axis by this much (default=1)
 --scale-y SCALE_Y       multiply variables on y-axis by this much (default=1)
 --flip-x                reverse the x-axis

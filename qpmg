@@ -3,6 +3,15 @@
 import gzip
 from argparse import ArgumentParser
 
+def columnify(strings, fmt='%26s', N=3):
+    s = '\n'.join([(fmt*3) % strings[i:i+N] for i in range(0, len(strings)-N, N)])
+    rem = len(strings)%N
+    if rem > 0:
+        s = s + '\n' + (fmt*rem) % strings[-rem:] + '\n'
+
+    return s
+
+
 def load_data(filename):
     """Reads a MESA/GYRE style data file and returns the scalar and vector
     data in two structured arrays.
@@ -73,9 +82,10 @@ def get_column(data, key):
     elif key.startswith('log') and key[3:] in data.dtype.names:
         return np.log10(data[key[3:]])
     else:
-        raise KeyError("'%s' is not a column in file '%s'. " % (key, filename) +
-                       "Available columns are: " + 
-                       ", ".join(data.dtype.names))
+        print("'%s' is not a column in file '%s'. " % (key, filename) +
+                       "Available columns are: \n" + 
+                       columnify(data.dtype.names))
+        raise KeyError("'%s' is not a column in file '%s'. " % (key, filename))
         
 
 parser = ArgumentParser( description="""``qpmg`` is a simple Python
